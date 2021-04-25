@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.linalg as la 
 
-def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, alpha = 0.1):
+def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, alpha = 0.01):
     '''
     Implementation of Stochastic Gradient Hamiltonian Monte Carlo (SGHMC).
     
@@ -21,7 +21,7 @@ def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, 
     
     burnin: integer, the number of iterations before storing sampling points, should be less than epochs, default set to 100
     
-    lr: learning rate, default set to 0.001 / n_samples
+    lr: learning rate, default set to 0.01 / n_samples
     
     alpha: momentum decay, default set to 0.1
     
@@ -34,7 +34,7 @@ def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, 
     
     n, m = data.shape
     p = theta0.shape[0]
-    lr = 0.001 / n if lr is None else lr
+    lr = 0.01 / n if lr is None else lr
     
     assert bs >= 1, 'Batch size has to be greater than or equal to 1.'
     assert bs <= n, 'Batch size has to be less than or equal to the number of samples.'
@@ -49,7 +49,6 @@ def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, 
     
     disp = la.cholesky(2 * lr * (alpha * np.eye(p) - 2 * beta_hat))
     
-    
     # build mini-batchs
     n_batch = int(n / bs)
     np.random.shuffle(data)
@@ -63,7 +62,7 @@ def sghmc(data, bs, theta0, gradU, Vhat, lr = None, epochs = 200, burnin = 100, 
         for j in range(n_batch):
             theta += r
             gradU_tilde = gradU(theta, data[j], n_batch)
-            r -= -alpha * r - lr * gradU_tilde.reshape(-1) + disp @ np.random.randn(p)
+            r += -alpha * r - lr * gradU_tilde.reshape(-1) + disp @ np.random.randn(p)
         
         samples[i + 1] = theta
     
