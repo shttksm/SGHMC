@@ -4,7 +4,13 @@ For details, refer to [the original paper](http://proceedings.mlr.press/v32/chen
 
 ## Directory structure
 * `README.md`: This file
-* 
+* `LICENSE`: 
+* `setup.py`:
+* `sghmc`: Our SGHMC source code
+* `test_sghmc`: Unit test code for our implementation 
+* `experiments`: Notebooks for experimental results, such as on simulated data, real data set, and comparative analysis
+* `doc`: Our final reports and related resources
+
 ## Installation
 
 ```sh
